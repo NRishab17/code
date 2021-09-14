@@ -185,7 +185,116 @@ print('queue front:'+str(b.front.data))
 print('queue rear:'+str(b.rear.data))
 print(b.dequeue())
 print(b.dequeue())'''
+class doublylinkedlistnode:
+    def __init__(self,data,next=None,prev=None):
+        self.data=data
+        self.next=next
+        self.prev=prev
+class doublylinkedlist:
+    def __init__(self):
+        self.head=None
+    def printelements(self):
+        if self.head is None:
+            print('empty list')
+            return
+        itr=self.head
+        llstr=''
+        while itr:
+            llstr+=str(itr.data)+'-->'
+            itr=itr.next
+        print(llstr)
+    def getlastnode(self):
+        itr=self.head 
+        while itr:
+            itr=itr.next
+        return itr
+    def backprint(self):
+        if self.head is None:
+            print('list is empty')
+            return
+        lastnode=self.getlastnode()
+        itr=lastnode
+        llstr=''
+        while itr:
+            llstr+=str(itr.data)+'-->'
+            itr=itr.next
+        print(llstr)
+    def length(self):
+        count=0
+        itr=self.head 
+        while itr:
+            count+=1
+            itr=itr.next
+        return count
+    def insertatbegining(self,data):
+        if self.head==None:
+            node=doublylinkedlistnode(data,self.head,None)
+            self.head=node
+        else:
+            node=doublylinkedlistnode(data,self.head,None)
+            self.head.prev=node
+            self.head=node
+    def insertatend(self,data):
+        if self.head==None:
+            node=doublylinkedlistnode(data,self.head,None)
+            self.head=node
+            return
+        itr=self.head 
+        while itr.next:
+            itr=itr.next 
+        itr.next=doublylinkedlistnode(data,None,itr)
+    def insertat(self,index,data):
+        if index<0 or index>self.length():
+            raise Exception('invalid index')
+        if index==0:
+            self.insertatbegining(data)
+        count=0
+        itr=self.head 
+        while itr:
+            if count==index-1:
+                node=doublylinkedlistnode(data,itr.next,itr)
+                if node.next:
+                    node.next.prev=node
+                itr.next=node
+                break
+            itr=itr.next 
+            count+=1
+    def removeat(self,index):
+        if index<0 or index>self.length():
+            raise Exception('invalid index')
+        if index==0:
+            self.head=self.head.next 
+            self.head.prev=None
+            
+        count=0
+        itr=self.head 
+        while itr:
+            if count==index:
+                itr.prev.next=itr.next 
+                if itr.next:
+                    itr.next.prev=itr.prev 
+                break
+            itr=itr.next 
+            count+=1
+    def insertvalues(self,list1):
+        self.head=None
+        for data in list1:
+            self.insertatend(data)
+'''l=doublylinkedlist()
+l.insertvalues([1,2,3,4,5])
+l.printelements()
+l.backprint()
+l.insertatbegining(10)
+l.insertatend(11)
+l.insertat(3,12)
+l.backprint()
+l.removeat(3)'''
 
         
-            
         
+        
+        
+        
+        
+        
+       
