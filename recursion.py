@@ -182,11 +182,79 @@ m=len(string)
 n=int((2**m)+1)  
 list1=[None for i in range(n)]
 #print(uniquesubsequences(string, list1,0,0))  
-    
-        
-        
-    
-    
+def permutationsofstring(string,per):
+    if len(string)==0:
+        print(per)
+        return
+    for i in range(len(string)):
+        curr=string[i]
+        #from abc curr stores element at i index and adds it to newchar
+        newstr=string[0:i]+string[i+1:]
+        permutationsofstring(newstr,per+curr)
+#permutationsofstring('abc','')
+''' in abc possible combinations are abc,acb,bac,bca,cab,cba
+3 string character so possible combinations=3!=6
+time complexity is O(n!)'''
+def paths(i,j,n,m):
+    if i==n-1 and j==m-1:
+        return 1
+    if i==n or j==m:
+        return 0
+    #moving down
+    downpaths=paths(i+1, j, n, m)
+    #move right
+    rightpaths=paths(i,j+1,n,m)
+    return downpaths+rightpaths
+#print(paths(0,0,3,3))
+''' in a maze move from (0,0) to (n,m) where  we can move 
+right or downward only
+in our case we take n,m=3,3 total paths by logic is 6
+every cell has 2 choices move right or down
+but corner cell have only one choice
+let our cell be at(i,j) sowe can move (i+1,j) or (i,j+1)
+but at corner cell we have one option as 
+i becomes n-1 then move only down or j becomes m-1move only right
+we recursively find paths from certain cell to get to destination 
+every times and find total by adding all paths'''        
+def placetiles(n,m):
+    if n==m:
+        return 2
+    if n<m:
+        return 1
+    verticalplacements=placetiles(n-m, m)
+    horizontalplacements=placetiles(n-1, m)
+    return verticalplacements+horizontalplacements
+#print(placetiles(4, 2))
+''' place tiles of 1*m in floor in size of n*m in our case n=4,m=2
+place n tiles if vertically arranged then place n-m tiles
+if horizontally then place n-1
+base case is when n=m then ways=2 horizontally and vertically eg:n=2,m=2
+n<m then ways=1 because only horizontal eg:n=2,m=4'''     
+def callguests(n):
+    if n<=1:
+        return 1
+    single=callguests(n-1)
+    pairs=(n-1)*callguests(n-2)
+    return single+pairs
+#print(callguests(4))
+'''finding no of ways in which invite n people to party in single or in pairs
+eg: n=4 we have 10 ways and n=3 we have 4 ways
+calling a guest single then call n-1 guests and if we pair n-1 choices then call
+n-2 guests'''
+def subsets(n,lists):
+    if n==0:
+        print(lists)
+        return
+    #add hoga
+    lists.append(n)
+    subsets(n-1,lists)
+    #add nahi hoga
+    lists.pop()
+    subsets(n-1,lists)
+#subsets(3,[])
+'''print all subsets of n natural numbers eg:n=3
+subset=(1,2,3),(1,2),(1,3),(2,3),(1),(2),(3),() O(2^n)'''
+
     
         
         
