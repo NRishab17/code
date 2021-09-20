@@ -53,3 +53,15 @@ while i<len(inp):
     i+=1
 print(maxlength)
 print(string)
+def getbit(value,index):
+    return ((value & (1<<index))!=0)
+def setbit(value,index):
+    return value | (1<<index)
+def clearbit(value,index):
+    return value & ~(1<<index)
+def togglebit(value,index):
+    return value ^ (1<<index)
+def updatebit(n,pos,value):
+    mask=~(1<<pos)
+    n=n&mask
+    return n | (value<<pos)
