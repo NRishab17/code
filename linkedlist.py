@@ -101,7 +101,31 @@ class linkedlist:
                 itr.next=itr.next.next 
                 break
             itr=itr.next 
-                
+    def reverselist(self):
+        prev=None
+        curr=self.head
+        while curr is not None:
+            next=curr.next 
+            curr.next=prev 
+            prev=curr 
+            curr=next 
+        self.head=prev 
+    def reverseknode(self,head,k):
+        if head==None:
+            return None
+        curr=head
+        next=None
+        prev=None
+        count=0
+        while curr is not None and count<k:#same as reverse only apply upto k elements
+            next=curr.next 
+            curr.next=prev 
+            prev=curr 
+            curr=next 
+            count+=1
+        if next is not None:#next is now k+1 node pointer recursively call for list starting from curr and make rest  of list as next of first node
+            head.next=self.reverseknode(next, k)
+        return prev#prev is head of input list 
 #code for stack in linked list       
 class stack:
     def __init__(self):
