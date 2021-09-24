@@ -134,5 +134,107 @@ root.postorder()              /
 print()                      4
 root.inorder()
 print()'''
-  
-    
+def printkthlevelsum(root,k):
+        if root==None:
+            return 0
+        q=[]
+        q.append(root)
+        level=0
+        sum=0
+        flag=0
+        while len(q)!=0:
+            size=len(q)
+            while size!=0:
+                size-=1
+                ptr=q[0]
+                q.pop(0)
+                if level==k:
+                    sum+=ptr.val
+                    flag=1
+                else:
+                    if ptr.left:
+                        q.append(ptr.left)
+                    if ptr.right:
+                        q.append(ptr.right)
+            level+=1
+            if flag==1:
+                break 
+        return sum            
+def printlevelorder(root):
+    h=height(root)
+    for i in range(1,h+1):
+        printcurrentlevel(root,i)
+def printcurrentlevel(root,level):
+    if root is None:
+        return
+    if level==1:
+        print(root.val,end=' ')
+    elif level>1:
+        printcurrentlevel(root.left, level-1)
+        printcurrentlevel(root.right, level-1)
+def height(root):#returns length of tree
+    if root is None:#no root element so return 0
+        return 0
+    else:
+        lheight=height(root.left)
+        rheight=height(root.right)
+        if lheight>rheight:
+            return lheight+1
+        else:
+            return rheight+1
+#diameter of tree is no of nodes on longest path between 2 end nodes in our case from 4-3
+#diameter=max(diameter of left subtree or right subtree or longest path between leaves through root(which is height of subtrees of root))
+#when 5 was added diameter became 4 as 5-4-2-1 is longer
+def diameter(root):
+    if root is None:
+        return 0
+    lheight=height(root.left)
+    rheight=height(root.right)
+    lwidth=diameter(root.left)
+    rwidth=diameter(root.right)
+    return max(lheight+rheight+1,(max(rwidth,lwidth)))
+'''we add values of child nodes to parent such that parent node=parentnode value+child values root is found to be sum of all nodes ofbinary tree'''
+def sumreplacement(root):
+    if root==None:
+        return
+    sumreplacement(root.left)
+    sumreplacement(root.right)
+    if root.left:
+        root.val+=root.left.val
+    if root.right:
+        root.val+=root.right.val
+''' mod(left subtree height - right subtree height)<=1 is a balanced height tree'''
+'''      a)        1         b)       1
+                 /\                / \
+                2  3              2   3
+             /                  /
+            4                   4
+                                \                 
+                                5
+in a) 4 is child so is balanced,2 has left subtree only abs(lh-rh)=1, 3 is child node so balanced,1 has 2 subtree lh=2 and rh=1 so abs(lh-rh)=1
+in b) 5 is child so balanced,4 has right subtree so abs(lh-rh)=abs(0-1)=1,2 has left subtree so abs(lh-rh)=abs(2-0)=2 so unbalanced'''
+                                       
+def balancedheighttree(root):
+    if root==None:
+        return True
+    if balancedheighttree(root.left)==False:
+        return False
+    if balancedheighttree(root.right)==False:
+        return False
+    lh=height(root.left)
+    rh=height(root.right)
+    if abs(lh-rh)<=1:
+        return True
+    else:
+       return False
+#root=Node(1)
+#root.left=Node(2)
+#root.right=Node(3)
+#root.left.left=Node(4) 
+#root.left.left.right=Node(5)     1                1
+#root.preorder()                 /\                / \
+#print()                        2  3              2   3
+#root.postorder()              /                  /
+#print()                      4                   4
+#root.inorder()                                    \
+#print()                                            5
