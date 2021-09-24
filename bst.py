@@ -238,3 +238,239 @@ def balancedheighttree(root):
 #print()                      4                   4
 #root.inorder()                                    \
 #print()                                            5
+'''we try to print elements of tree when viewed from rightside
+eg:  a)  1          b)   1
+        / \           / \ 
+        2  3         2   3
+        /            / \ 
+        4           4  5
+a)1 3 4 are visisble from right side so these areprinted
+b)1 3 5 are visisble from side as 4 is hided by 5 on viewing from right side
+we declare maxlevel to keep maxlevel for each recursion(as a list)
+
+rot is none is base case Whenever we see a node whose level is more than maximum level so far, we print the node because this is the last node in its level
+we call right side of subtree first in recursion then left as right element can hide left element'''
+class Node:
+    def __init__(self,data):
+        self.val=data
+        self.left=None
+        self.right=None
+def rightViewUtil(root, level, max_level):
+    if root is None:
+        return
+    if (max_level[0] < level):
+        print (root.val)
+        max_level[0] = level
+    rightViewUtil(root.right, level+1, max_level)
+    rightViewUtil(root.left, level+1, max_level)
+def rightView(root):
+    max_level = [0]
+    rightViewUtil(root, 1, max_level)
+root = Node(1)
+root.left = Node(2)
+root.right = Node(3)
+root.left.right = Node(5)
+root.left.left=Node(4)
+rightView(root)
+def leftViewUtil(root, level, max_level):
+    # Base Case
+    if root is None:
+        return
+    # If this is the first node of its level
+    if (max_level[0] < level):
+        print(root.val)
+        max_level[0] = level
+    # Recur for left and right subtree
+    leftViewUtil(root.left, level + 1, max_level)
+    leftViewUtil(root.right, level + 1, max_level)
+def leftView(root):
+    max_level = [0]
+    leftViewUtil(root, 1, max_level)
+root = Node(1)
+root.left = Node(2)
+root.right = Node(3)
+root.left.right = Node(5)
+root.left.left=Node(4)
+leftView(root)
+''' we print elements of tree when viewed from left side so left side elements hide right subtree if not rightsubtree is print 
+as soon as 1st element is found of its level we print it and set new max level then itrerate through left tree first then right tree '''
+def pathToNode(root, path, k): 
+    # base case handling
+    if root is None:
+        return False
+     # append the node value in path
+    path.append(root.val)
+    # See if the k is same as root's data
+    if root.val== k :
+        return True
+    # Check if k is found in left or right
+    # sub-tree
+    if ((root.left != None and pathToNode(root.left, path, k)) or
+            (root.right!= None and pathToNode(root.right, path, k))):
+        return True
+    # If not present in subtree rooted with root,
+    # remove root from path and return False
+    path.pop()
+    return False
+def distance(root, data1, data2):
+    if root:# store path corresponding to node: data1,data2
+        path1 = []
+        pathToNode(root, path1, data1)
+        path2 = []
+        pathToNode(root, path2, data2)
+        # iterate through the paths to find the
+        # common path length
+        i=0
+        while i<len(path1) and i<len(path2):
+            # get out as soon as the path differs
+            # or any path's length get exhausted
+            if path1[i] != path2[i]:
+                break
+            i = i+1
+         # get the path length by deducting the
+        # intersecting path length (or till LowestCommonAncestor) 
+        return (len(path1)+len(path2)-2*i)#we subtract 2*i as commonancestor is repeated in counting path of 2 points 
+    else:
+        return 0
+root = Node(1)
+root.left = Node(2)
+root.right = Node(3)
+root.left.right = Node(5)
+root.left.left=Node(4)
+print(distance(root, 3, 2))
+'''       b)   1
+              / \
+             2   3
+            / \ 
+           4  5
+we try to print shortest distance between given 2 points distance=no.of edges between 2 points 
+eg: from 5 to 3 we go to 2,1,3 to reach three so distance is 3 and its shortest distance
+The distance between two nodes can be obtained
+Dist(n1, n2) = Dist(root, n1) + Dist(root, n2) - 2*Dist(root, lca) 
+we store path corresponding to give node and call pathtonode function
+in pathtonode we try to find in which subtree node value our pathvalue=k value
+then in distance function get out as soon as the path differor  or any path's length get exhausted
+as soon as path1[i]!=path2[i] break the loop and return Dist(root, n1) + Dist(root, n2) - 2*Dist(root, lca) '''
+# Function to convert binary tree into
+# linked list by altering the right node
+# and making left node point to None
+def flatten(root):
+    # Base condition- return if root is None
+    # or if it is a leaf node
+    if (root == None or root.left == None and
+                        root.right == None):
+        return
+    # If root.left exists then we have
+    # to make it root.right
+    if (root.left != None):
+        # Move left recursively
+        flatten(root.left)
+        # Store the node root.right
+        tmpRight = root.right
+        root.right = root.left
+        root.left = None
+        # Find the position to insert
+        # the stored value  
+        t = root.right
+        while (t.right != None):
+            t = t.right
+        # Insert the stored value
+        t.right = tmpRight
+    # Now call the same function
+    # for root.right
+    flatten(root.right)
+def inorder(root):#to print inorder way
+    if (root == None):
+        return
+    inorder(root.left)
+    print(root.val, end = ' ')
+    inorder(root.right)
+root = Node(1)
+root.left = Node(2)
+root.right = Node(3)
+root.right.right = Node(5)
+root.right.left=Node(4)
+inorder(root)
+flatten(root)
+print()
+inorder(root)
+'''            1           1
+              / \          \
+             2   3          2
+             / \              \             flatten version
+            4  5               4
+                               \
+                                5
+                                 \
+                                 3
+binary tree flatten in linked list(not using other ds) such that left node point to none and right points to next node
+Base condition- return if root is None or if it is a leaf node
+we covert all left subtree nodes to right side elements then right side elements get pushed down as left occupy those positions'''
+def printkDistanceNodeDown(root, k):     
+    # Base Case
+    if root is None or k< 0 :
+        return
+    # If we reach a k distant node, print it
+    if k == 0 :
+        print (root.val)
+        return
+    # Recur for left and right subtree
+    printkDistanceNodeDown(root.left, k-1)
+    printkDistanceNodeDown(root.right, k-1)
+# Prints all nodes at distance k from a given target node The k distant nodes may be upward or downward. This function
+# returns distance of root from target node, it returns -1
+# if target node is not present in tree rooted with root
+def printkDistanceNode(root, target, k):
+    # Base Case 1 : IF tree is empty return -1
+    if root is None:
+        return -1
+    # If target is same as root. Use the downward function
+    # to print all nodes at distance k in subtree rooted with
+    # target or root
+    if root == target:
+        printkDistanceNodeDown(root, k)
+        return 0
+    # Recur for left subtree
+    dl = printkDistanceNode(root.left, target, k)
+    # Check if target node was found in left subtree
+    if dl != -1:
+        # If root is at distance k from target, print root
+        # Note: dl is distance of root's left child
+        # from target
+        if dl +1 == k :
+            print (root.val)
+        # Else go to right subtreee and print all k-dl-2
+        # distant nodes
+        # Note: that the right child is 2 edges away from
+        # left chlid
+        else:
+            printkDistanceNodeDown(root.right, k-dl-2)
+        # Add 1 to the distance and return value for
+        # for parent calls
+        return 1 + dl
+    # MIRROR OF ABOVE CODE FOR RIGHT SUBTREE
+    # Note that we reach here only when node was not found
+    # in left subtree
+    dr = printkDistanceNode(root.right, target, k)
+    if dr != -1:
+        if (dr+1 == k):
+            print (root.val)
+        else:
+            printkDistanceNodeDown(root.left, k-dr-2)
+        return 1 + dr
+    # If target was neither present in left nor in right subtree
+    return -1
+root = Node(20)
+root.left = Node(8)
+root.right = Node(22)
+root.left.left = Node(4)
+root.left.right = Node(12)
+root.left.right.left = Node(10)
+root.left.right.right = Node(14)
+printkDistanceNode(root,root.left.right, 2)
+'''we print all node k given distance from target node
+There are two types of nodes to be considered. 
+1) Nodes in the subtree rooted with target node. For example, if the target node is 8 and k is 2, then such nodes are 10 and 14. 
+2) Other nodes, may be an ancestor of target, or a node in some other subtree. For target node 8 and k is 2, the node 22 comes in this category.
+Finding the first type of nodes is easy to implement. Just traverse subtrees rooted with the target node and decrement k in recursive call. When the k becomes 0, print the node currently being traversed (See this for more details). Here we call the function as printkdistanceNodeDown().
+How to find nodes of second type? For the output nodes not lying in the subtree with the target node as the root, we must go through all ancestors. For every ancestor, we find its distance from target node, let the distance be d, now we go to other subtree (if target was found in left subtree, then we go to right subtree and vice versa) of the ancestor and find all nodes at k-d distance from the ancestor.'''
