@@ -1,105 +1,3 @@
-#code for binarysearchtree
-class bst:
-    def __init__(self,data):
-        self.data=data
-        self.left=None
-        self.right=None
-    def addchild(self,data):
-        if data==self.data:
-            return 
-        elif data<self.data:
-            if self.left:
-                self.left.addchild(data)
-            else:
-                self.left=bst(data)
-        else:
-            if self.right:
-                self.right.addchild(data)
-            else:
-                self.right=bst(data)
-    def search(self,val):
-        if self.data==val:
-            return True
-        if val<self.data:
-            if self.left:
-                return self.left.search(val)
-            else:
-                return False
-        if val>self.data:
-            if self.right:
-                return self.right.search(val)
-            else:
-                return False
-    def mintree(self):
-        if self.left is None:
-            return self.data
-        return self.left.mintree()
-    
-    def maxtree(self):
-        if self.right is None:
-            return self.data
-        return self.right.maxtree()
-    
-    
-    def delete(self,val):
-        if val<self.data:
-            if self.left:
-                self.left=self.left.delete(val)
-        elif val>self.data:
-            if self.right:
-                self.right=self.right.delete(val)
-        else:
-            if self.left is None and self.right is None:
-                return None
-            if self.left is None:
-                return self.right 
-            if self.right is None:
-                return self.left 
-            minval=self.right.mintree()
-            self.data=minval
-            self.right=self.right.delete(minval)
-        return self
-    def inorder(self): #returns list in asceding order
-        elements=[]
-        if self.left:
-            elements+=self.left.inorder()
-        elements.append(self.data)
-        if self.right:
-            elements+=self.right.inorder()
-        return elements
-    def preorder(self):
-        elements=[self.data]
-        if self.left:
-            elements+=self.left.preorder()
-        if self.right:
-            elements+=self.right.preorder()
-        return elements
-    def postorder(self):
-        elements=[]
-        if self.left:
-            elements+=self.left.postorder()
-        if self.right:
-            elements+=self.right.postorder()
-        elements.append(self.data)
-        return elements
-    def sumoftree(self):
-        leftsum=self.left.sumoftree() if self.left else 0
-        rightsum=self.right.sumoftree() if self.right else 0
-        return self.data+leftsum+rightsum
-'''root=bst(17)
-root.addchild(4)
-root.addchild(23)                         17
-root.addchild(6)                         /  \
-root.addchild(7)                       6     18
-root.addchild(18)                     /  \   / \
-root.addchild(25)                    4   7  23  25
-print(root.mintree())
-print(root.maxtree())               
-print(root.sumoftree())               
-print(root.inorder())             
-print(root.preorder())           
-print(root.postorder())
-print(root.delete(7))'''
 #code for binarytree
 class Node:
     def __init__(self,key):
@@ -474,3 +372,361 @@ There are two types of nodes to be considered.
 2) Other nodes, may be an ancestor of target, or a node in some other subtree. For target node 8 and k is 2, the node 22 comes in this category.
 Finding the first type of nodes is easy to implement. Just traverse subtrees rooted with the target node and decrement k in recursive call. When the k becomes 0, print the node currently being traversed (See this for more details). Here we call the function as printkdistanceNodeDown().
 How to find nodes of second type? For the output nodes not lying in the subtree with the target node as the root, we must go through all ancestors. For every ancestor, we find its distance from target node, let the distance be d, now we go to other subtree (if target was found in left subtree, then we go to right subtree and vice versa) of the ancestor and find all nodes at k-d distance from the ancestor.'''
+INT_MIN=-2**32
+def maxPathSumUtil(root, res):
+    # Base Case
+    if root is None:
+        return 0
+    # Find maximumsum in left and righ subtree. Also
+    # find maximum root to leaf sums in left and right
+    # subtrees ans store them in ls and rs
+    ls = maxPathSumUtil(root.left, res)
+    rs = maxPathSumUtil(root.right, res)
+    # If both left and right children exist
+    if root.left is not None and root.right is not None:
+        # update result if needed
+        res[0] = max(res[0], ls + rs + root.val)
+        # Return maximum possible value for root being
+        # on one side
+        return max(ls, rs) + root.val
+    # If any of the two children is empty, return
+    # root sum for root being on one side
+    if root.left is None:
+        return rs + root.val
+    else:
+        return ls + root.val
+# The main function which returns sum of the maximum
+# sum path betwee ntwo leaves. THis function mainly
+# uses maxPathSumUtil()
+def maxPathSum(root):
+    res = [INT_MIN]
+    maxPathSumUtil(root, res)
+    return res[0]
+root = Node(1)
+root.left=Node(2)
+root.right=Node(-3)
+root.left.left=Node(4)
+root.left.right=Node(10)
+print(maxPathSum(root))
+# Finds the path from root node to given root of the tree.
+# Stores the path in a list path[], returns true if path
+# exists otherwise false
+def findPath( root, path, k):
+    # Baes Case
+    if root is None:
+        return False
+    # Store this node is path vector. The node will be
+    # removed if not in path from root to k
+    path.append(root.val)
+    # See if the k is same as root's key
+    if root.val== k :
+        return True
+    # Check if k is found in left or right sub-tree
+    if ((root.left != None and findPath(root.left, path, k)) or
+            (root.right!= None and findPath(root.right, path, k))):
+        return True
+    # If not present in subtree rooted with root, remove
+    # root from path and return False
+    path.pop()
+    return False
+# Returns LCA if node n1 , n2 are present in the given
+# binary tre otherwise return -1
+def findLCA(root, n1, n2):
+    # To store paths to n1 and n2 fromthe root
+    path1 = []
+    path2 = []
+    # Find paths from root to n1 and root to n2.
+    # If either n1 or n2 is not present , return -1
+    if (not findPath(root, path1, n1) or not findPath(root, path2, n2)):
+        return -1
+    # Compare the paths to get the first different value
+    i = 0
+    while(i < len(path1) and i < len(path2)):
+        if path1[i] != path2[i]:
+            break
+        i += 1
+    return path1[i-1]
+root = Node(1)
+root.left = Node(2)
+root.right = Node(3)
+root.left.left = Node(4)
+root.left.right = Node(5)
+root.right.left = Node(6)
+root.right.right = Node(7)
+print ("LCA(4, 5) = %d" %(findLCA(root, 4, 5,)))
+# function to convert sorted array to a
+# balanced BST
+# input : sorted array of integers
+# output: root node of balanced BST
+def sortedArrayToBST(arr):
+    if not arr:
+        return None
+    # find middle
+    mid = (len(arr)) // 2
+    # make the middle element the root
+    root = Node(arr[mid])
+    # left subtree of root has all
+    # values <arr[mid]
+    root.left = sortedArrayToBST(arr[:mid])
+    # right subtree of root has all
+    # values >arr[mid]
+    root.right = sortedArrayToBST(arr[mid+1:])
+    return root
+def preOrder(node):
+    if not node:
+        return
+    print (node.val)
+    preOrder(node.left)
+    preOrder(node.right)
+"""Constructed balanced BST is
+    4
+/ \
+2 6
+/ \ / \
+1 3 5 7"""
+arr = [1, 2, 3, 4, 5, 6, 7]
+root = sortedArrayToBST(arr)
+preOrder(root)
+def zizagtraversal(root):
+    # Base Case
+    if root is None:
+        return
+    # Create two stacks to store current
+    # and next level
+    currentLevel = []
+    nextLevel = []
+    # if ltr is true push nodes from
+    # left to right otherwise from
+    # right to left
+    ltr = True
+    # append root to currentlevel stack
+    currentLevel.append(root)
+    # Check if stack is empty
+    while len(currentLevel) > 0:
+        # pop from stack
+        temp = currentLevel.pop(-1)
+        # print the data
+        print(temp.val, " ", end="")
+        if ltr:
+            # if ltr is true push left
+            # before right
+            if temp.left:
+                nextLevel.append(temp.left)
+            if temp.right:
+                nextLevel.append(temp.right)
+        else:
+            # else push right before left
+            if temp.right:
+                nextLevel.append(temp.right)
+            if temp.left:
+                nextLevel.append(temp.left)
+        if len(currentLevel) == 0:
+            # reverse ltr to push node in
+            # opposite order
+            ltr = not ltr
+            # swapping of stacks
+            currentLevel, nextLevel = nextLevel, currentLevel
+root = Node(1)
+root.left = Node(2)
+root.right = Node(3)
+root.left.left = Node(7)
+root.left.right = Node(6)
+root.right.left = Node(5)
+root.right.right = Node(4)
+zizagtraversal(root)
+def isIdentical(root1, root2) :
+    # Check if both the trees are empty
+    if (root1 == None and root2 == None) :
+        return 1
+    # If any one of the tree is non-empty
+    # and other is empty, return false
+    elif (root1 != None and root2 == None) :
+        return 0
+    elif (root1 == None and root2 != None) :
+        return 0
+    else: # Check if current data of both trees
+          # equal and recursively check for left
+          # and right subtrees
+        if (root1.val == root2.val and
+            isIdentical(root1.left, root2.left)
+            and isIdentical(root1.right, root2.right)) :
+            return 1
+        else:
+            return 0
+root1 = Node(5)
+root1.left = Node(3)
+root1.right = Node(8)
+root1.left.left = Node(2)
+root1.left.right = Node(4)
+root2 = Node(5)
+root2.left = Node(3)
+root2.right = Node(8)
+root2.left.left = Node(2)
+root2.left.right = Node(4)
+if (isIdentical(root1, root2)):
+    print("Both BSTs are identical")
+else:
+    print("BSTs are not identical")
+    
+# Returns size of the largest BST subtree
+# in a Binary Tree (efficient version).
+def largestBST(node):
+    # Set the initial values for calling
+    # largestBSTUtil()
+    Min = [999999999999] # For minimum value in right subtree
+    Max = [-999999999999] # For maximum value in left subtree
+    max_size = [0] # For size of the largest BST
+    is_bst = [0]
+    largestBSTUtil(node, Min, Max,
+                         max_size, is_bst)
+    return max_size[0]
+# largestBSTUtil() updates max_size_ref[0]
+# for the size of the largest BST subtree.
+# Also, if the tree rooted with node is
+# non-empty and a BST, then returns size of
+# the tree. Otherwise returns 0.
+def largestBSTUtil(node, min_ref, max_ref,
+                         max_size_ref, is_bst_ref):
+    # Base Case
+    if node == None:
+        is_bst_ref[0] = 1 # An empty tree is BST
+        return 0 # Size of the BST is 0
+    Min = 999999999999
+    # A flag variable for left subtree property
+    # i.e., max(root.left) < root.data
+    left_flag = False
+    # A flag variable for right subtree property
+    # i.e., min(root.right) > root.data
+    right_flag = False
+    ls, rs = 0, 0    # To store sizes of left and right subtree
+    # Following tasks are done by recursive
+    # call for left subtree
+    # a) Get the maximum value in left subtree
+    #   (Stored in max_ref[0])
+    # b) Check whether Left Subtree is BST or
+    #    not (Stored in is_bst_ref[0])
+    # c) Get the size of maximum size BST in
+    #    left subtree (updates max_size[0])
+    max_ref[0] = -999999999999
+    ls = largestBSTUtil(node.left, min_ref, max_ref,
+                           max_size_ref, is_bst_ref)
+    if is_bst_ref[0] == 1 and node.val > max_ref[0]:
+        left_flag = True
+    # Before updating min_ref[0], store the min
+    # value in left subtree. So that we have the 
+    # correct minimum value for this subtree
+    Min = min_ref[0]
+    # The following recursive call does similar 
+    # (similar to left subtree) task for right subtree
+    min_ref[0] = 999999999999
+    rs = largestBSTUtil(node.right, min_ref, max_ref,
+                        max_size_ref, is_bst_ref)
+    if is_bst_ref[0] == 1 and node.val < min_ref[0]:
+        right_flag = True
+    # Update min and max values for the
+    # parent recursive calls
+    if Min < min_ref[0]:
+        min_ref[0] = Min
+    if node.val< min_ref[0]: # For leaf nodes
+        min_ref[0] = node.val
+    if node.val > max_ref[0]:
+        max_ref[0] = node.val
+    # If both left and right subtrees are BST.
+    # And left and right subtree properties hold
+    # for this node, then this tree is BST.
+    # So return the size of this tree
+    if left_flag and right_flag:
+        if ls + rs + 1 > max_size_ref[0]:
+            max_size_ref[0] = ls + rs + 1
+        return ls + rs + 1
+    else:
+        # Since this subtree is not BST, set is_bst
+        # flag for parent calls is_bst_ref[0] = 0;
+        return 0
+#     50
+# /     \
+# 10     60
+# / \     / \
+# 5 20 55 70
+#         /     / \
+#     45     65 80
+root = Node(50)
+root.left= Node(10)
+root.right= Node(60)
+root.left.left = Node(5)
+root.left.right = Node(20)
+root.right.left = Node(55)
+root.right.left.left = Node(45)
+root.right.right = Node(70)
+root.right.right.left = Node(65)
+root.right.right.right = Node(80)
+print("Size of the largest BST is",largestBST(root))
+# Utility function to track the nodes
+# that we have to swap
+def correctBstUtil(root, first, middle,last, prev):
+    if(root):
+        # Recur for the left sub tree
+        correctBstUtil(root.left, first, middle, last, prev)
+        # If this is the first violation, mark these
+        # two nodes as 'first and 'middle'
+        if(prev[0] and root.val < prev[0].val):
+            if(not first[0]):
+                first[0] = prev[0]
+                middle[0] = root
+            else:
+                # If this is the second violation,
+                # mark this node as last
+                last[0] = root
+        prev[0] = root
+        # Recur for the right subtree
+        correctBstUtil(root.right, first, middle, last, prev)
+# A function to fix a given BST where
+# two nodes are swapped. This function
+# uses correctBSTUtil() to find out two
+# nodes and swaps the nodes to fix the BST
+def correctBst(root):
+    # Followed four lines just for forming
+    # an array with only index 0 filled
+    # with None and we will update it accordingly.
+    # we made it null so that we can fill
+    # node data in them.
+    first = [None]
+    middle = [None]
+    last = [None]
+    prev = [None]
+    # Setting arrays (having zero index only)
+    # for capturing the required node
+    correctBstUtil(root, first, middle, last, prev)
+    # Fixing the two nodes
+    if(first[0] and last[0]):
+        # Swapping for first and last key values
+        first[0].val, last[0].val = (last[0].val,first[0].val)
+    elif(first[0] and middle[0]):
+        # Swapping for first and middle key values
+        first[0].val, middle[0].val = (middle[0].val,  first[0].val)
+    # else tree will be fine
+# Function to print inorder
+# traversal of tree
+def PrintInorder(root):
+    if(root):
+        PrintInorder(root.left)
+        print(root.val, end = " ")
+        PrintInorder(root.right)
+    else:
+        return
+#      6
+#     /   \
+#   10    2
+#  / \   / \
+# 1   3 7   12
+# Following 7 lines are for tree formation
+root = Node(6)
+root.left = Node(10)
+root.right = Node(2)
+root.left.left = Node(1)
+root.left.right = Node(3)
+root.right.left = Node(7)
+root.right.right = Node(12)
+PrintInorder(root)
+correctBst(root)
+PrintInorder(root)
