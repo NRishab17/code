@@ -19,8 +19,8 @@ def prefixevaluation(s):
             if c=='/':
                 stack.append(o1//o2)
     return stack.pop()
-print(prefixevaluation('+*423'))
-class evaluate_postfix:
+#print(prefixevaluation('+*423'))
+'''class evaluate_postfix:
     def __init__(self):
         self.items=[]
         self.size=-1
@@ -62,7 +62,7 @@ class evaluate_postfix:
 s=evaluate_postfix()
 expr=input('enter the postfix expression')
 value=s.evalute(expr)
-print('the result of postfix expression',expr,'is',value)
+print('the result of postfix expression',expr,'is',value)'''
 class infix_to_postfix:
     precedence={'^':5,'*':4,'/':4,'+':3,'-':3,'(':2,')':1}#as certain operation have more precendence than others
     def __init__(self):
@@ -119,11 +119,11 @@ class infix_to_postfix:
             else:
                 postfix+=self.pop()
         return postfix
-s=infix_to_postfix()
-expr=input('enter the expression ')
-result=s.infixtopostfix(expr)
-if (result!=False):
-    print("the postfix expr of :",expr,"is",result)
+#s=infix_to_postfix()
+#expr=input('enter the expression ')
+#result=s.infixtopostfix(expr)
+#if (result!=False):
+    #print("the postfix expr of :",expr,"is",result)
     def reverse(self,expr):
         rev=""
         for i in expr:
@@ -131,7 +131,7 @@ if (result!=False):
                 i=')'
             elif i == ')':
                 i='('
-            rev=i+rev
+            rev+=i
         return rev
     def infixtoprefix (self,expr):
         prefix=""
